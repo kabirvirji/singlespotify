@@ -1,19 +1,35 @@
-
-// const config = require('./config.json');
-// const SpotifyWebApi = require('spotify-web-api-node');
-// const spotifyApi = new SpotifyWebApi({
-//   clientId : config.spotifyid,
-//   clientSecret : config.spotifysecret
-// });
+const prettyjson = require('prettyjson');
+const config = require('./config.json');
+const SpotifyWebApi = require('spotify-web-api-node');
+const spotifyApi = new SpotifyWebApi({
+  clientId : config.spotifyid,
+  clientSecret : config.spotifysecret
+});
+function prettyConsole(data) {
+  console.log(prettyjson.render(data));
+}
 'use strict';
 const meow = require('meow');
 // const foo = require('.');
 
 const foo = function foo(inputs, flags) {
-	console.log(inputs);
 	console.log(flags);
-	console.log(flags['r']);
+	const artistName = flags['a'];
+	console.log(artistName);
+
+
+	spotifyApi.searchArtists(artistName)
+	  .then(function(data) {
+	  	const searchResults = data;
+	    var fullURI = data.body.artists.items[0].uri;
+	    const artistURI = fullURI.slice(15);
+	    console.log(artistURI);
+	  }, function(err) {
+	    console.error(err);
+	  });
 }
+
+
 
 const cli = meow(`
     Usage
@@ -27,7 +43,7 @@ const cli = meow(`
       🌈 unicorns 🌈
 `, {
     alias: {
-        r: 'rainbow'
+        a: 'artist'
     }
 });
 /*
@@ -39,6 +55,8 @@ const cli = meow(`
 */
 
 foo(cli.input[0], cli.flags);
+
+// node index.js -a "some artist name"
 
 
 
