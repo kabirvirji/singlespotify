@@ -1,19 +1,24 @@
 {
-  "name": "Single Spotify",
-  "productName": "Singe Spotify",
+  "name": "singlespotify",
+  "productName": "singlespotify",
   "version": "1.0.0",
-  "description": "Create Spotify playlists based on one song or artist through the command line",
+  "description": "Create Spotify playlists based on one artist through the command line",
   "license": "MIT",
   "repository": "kabirvirji/singlespotify",
   "author": {
-      "name": "Kabir Virji",
-      "email": "kabirvirji@gmail.com",
-      "url": "kabirvirji"
+    "name": "Kabir Virji",
+    "email": "kabirvirji@gmail.com",
+    "url": "kabirvirji"
   },
-  "maintainers":
-    {
-      "name": "Kabir Virji",
-      "email": "kabirvirji@gmail.com",
-      "url": "kabirvirji"
-    }
+  "maintainers": {
+    "name": "Kabir Virji",
+    "email": "kabirvirji@gmail.com",
+    "url": "kabirvirji"
+  },
+  "bin": {
+    "singlespotify": "index.js"
+  },
+  "dependencies": {
+    "meow": "^3.7.0"
+  }
 }
