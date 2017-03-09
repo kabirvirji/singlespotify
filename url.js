@@ -18,27 +18,68 @@ var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
 console.log(authorizeURL);
 
 
-var credentials = {
+// var credentials = {
+//   clientId : config.spotifyid,
+//   clientSecret : config.spotifysecret,
+//   redirectUri : 'my-awesome-app-login://callback'
+// };
+
+// var spotifyApi = new SpotifyWebApi(credentials);
+
+// // The code that's returned as a query parameter to the redirect URI
+// var code = '';
+
+// // Retrieve an access token and a refresh token
+// spotifyApi.authorizationCodeGrant(code)
+//   .then(function(data) {
+//     console.log('The token expires in ' + data.body['expires_in']);
+//     console.log('The access token is ' + data.body['access_token']);
+//     console.log('The refresh token is ' + data.body['refresh_token']);
+
+//     // Set the access token on the API object to use it in later calls
+//     spotifyApi.setAccessToken(data.body['access_token']);
+//     spotifyApi.setRefreshToken(data.body['refresh_token']);
+//   }, function(err) {
+//     console.log('Something went wrong!', err);
+//   });
+var clientId = 'someClientId',
+    clientSecret = 'someClientSecret';
+
+// Create the api object with the credentials
+var spotifyApi = new SpotifyWebApi({
   clientId : config.spotifyid,
-  clientSecret : config.spotifysecret,
-  redirectUri : 'my-awesome-app-login://callback'
-};
+  clientSecret : config.spotifysecret
+});
 
-var spotifyApi = new SpotifyWebApi(credentials);
-
-// The code that's returned as a query parameter to the redirect URI
-var code = '';
-
-// Retrieve an access token and a refresh token
-spotifyApi.authorizationCodeGrant(code)
+// Retrieve an access token.
+spotifyApi.clientCredentialsGrant()
   .then(function(data) {
-    console.log('The token expires in ' + data.body['expires_in']);
+    console.log('The access token expires in ' + data.body['expires_in']);
     console.log('The access token is ' + data.body['access_token']);
-    console.log('The refresh token is ' + data.body['refresh_token']);
 
-    // Set the access token on the API object to use it in later calls
+    // Save the access token so that it's used in future calls
     spotifyApi.setAccessToken(data.body['access_token']);
-    spotifyApi.setRefreshToken(data.body['refresh_token']);
   }, function(err) {
-    console.log('Something went wrong!', err);
+        console.log('Something went wrong when retrieving an access token', err);
   });
+
+
+
+  spotifyApi.authorizationCodeGrant(authorizationCode)
+  .then(function(data) {
+    spotifyApi.setAccessToken(data.body['access_token']);
+	return spotifyApi.createPlaylist('kabirvirji', 'My Cool Playlist', { 'public' : false })
+	  .then(function(data) {
+	    console.log('Created playlist!');
+	  }, function(err) {
+	    console.log('Something went wrong!', err);
+	  });
+	});
+
+
+
+
+
+
+
+
