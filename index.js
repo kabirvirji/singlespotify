@@ -32,21 +32,51 @@ const foo = async function foo(inputs, flags) {
 	// get artist top tracks
 	let artistTopTracks = await spotifyApi.getArtistTopTracks(artistURI, 'CA');
 	artistTopTracks = artistTopTracks.body.tracks;
-	//console.log(artistTopTracks);
-	// for (i=0;i<5;i++){
-	// 	tracks.push(artistTopTracks[i].uri);
-	// }
 	for (let artistTrack of artistTopTracks) {
 		tracks.push(artistTrack.uri);
 	}
-	//console.log(tracks);
 
-	// get related artists
+	// get three related artists
 	let relatedArtists = await spotifyApi.getArtistRelatedArtists(artistURI);
 	relatedArtists = relatedArtists.body.artists;
-	for (let artist of relatedArtists) {
-		artists.push(artist.uri)
+	for (i=0;i<3;i++){
+		var currentArtist = relatedArtists[i].uri;
+		artists.push(currentArtist.slice(15));
 	}
+
+
+	// for (i<0;i<3;i++){
+	// 	let current = await spotifyApi.getArtistTopTracks(artists[i], 'CA');
+	// 	current = current.body.tracks;
+	// 	for (j=0;j<3;j++){
+	// 		tracks.push(current[j].uri);
+	// 	}
+	// }
+
+	// add related artist top songs to tracks array
+	
+	let artistOne = await spotifyApi.getArtistTopTracks(artists[0], 'CA');
+	artistOne = artistOne.body.tracks;
+	for (i=0;i<3;i++){
+		tracks.push(artistOne[i].uri);
+	}
+
+	let artistTwo = await spotifyApi.getArtistTopTracks(artists[1], 'CA');
+	artistTwo = artistTwo.body.tracks;
+	for (i=0;i<3;i++){
+		tracks.push(artistTwo[i].uri);
+	}
+
+	let artistThree = await spotifyApi.getArtistTopTracks(artists[2], 'CA');
+	artistThree = artistThree.body.tracks;
+	for (i=0;i<3;i++){
+		tracks.push(artistThree[i].uri);
+	}
+
+
+
+
+
 	console.log(tracks);
 	console.log(artists);
 
