@@ -127,14 +127,14 @@ const singlespotify = async function singlespotify(inputs, flags) {
 				};
 				got.post(url, options)
 				  .then(response => {
-				  	spinner.fail('Failed');
+				  	spinner.succeed('Success!');
 				    console.log(chalk.green(`
 	Your playlist is ready! 
 	It's called "${artistName}: singlespotify"`));
 				  })
 				  .catch(err => { 
 				  	spinner.fail('Failed');
-				  	console.log(err); 
+				  	console.log(chalk.red("There was an error adding songs to the playlist. Please try again.")); 
 				  });
 			}
 

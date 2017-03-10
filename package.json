@@ -19,6 +19,10 @@
     "singlespotify": "index.js"
   },
   "dependencies": {
-    "meow": "^3.7.0"
+    "chalk": "^1.1.3",
+    "got": "^6.7.1",
+    "meow": "^3.7.0",
+    "ora": "^1.1.0",
+    "spotify-web-api-node": "^2.3.6"
   }
 }
