@@ -1,26 +1,31 @@
+'use strict';
 const SpotifyWebApi = require('spotify-web-api-node');
 const fs = require('fs');
 const got = require('got');
 const meow = require('meow');
 const chalk = require('chalk');
 const ora = require('ora');
-'use strict';
-
 const spinner = ora('Loading ...').start();
+
 setTimeout(() => {
     spinner.color = 'green';
     spinner.text = 'Loading ...';
 }, 1000);
+
 const singlespotify = async function singlespotify(inputs, flags) {
 
 	// -a "Kanye West"
 	const artistName = flags['a'];
+
 	// -a "" evaluates to true
 	if (artistName === true){
 		spinner.fail('Failed');
-		console.log(chalk.red(`Oops! That search didn't work. Try again please!`))
+		console.log(chalk.red(`
+	Oops! That search didn't work. Try again please!
+	`))
 		return
 	}
+
 	// -c path/to/config.json
 	const configFile = flags['c'];
 
@@ -30,7 +35,11 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	}
 	catch(err) {
 		spinner.fail('Failed');
-		console.log(chalk.red(`Oops! That wasn't a valid config path. Try again please!`))
+		console.log(chalk.red(`
+	Oops! That wasn't a valid config path. Try again please!
+	
+	See https://github.com/kabirvirji/singlespotify#usage for more information
+	`))
 		return
 	}
 
@@ -43,11 +52,14 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	});
 
 	// get artist URI
-
 	const artistSearch = await spotifyApi.searchArtists(artistName);
+	// error check for invalid search
 	if (artistSearch.body.artists.items[0] === undefined) {
 		spinner.fail('Failed');
-		console.log(chalk.red(`Oops! That search didn't work. Try again please!`))
+		console.log(chalk.red(`
+
+	Oops! That search didn't work. Try again please!
+	`))
 		return
 	}
 	let artistURI = artistSearch.body.artists.items[0].uri;
@@ -81,27 +93,24 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	// }
 	// exit();
 
-	// add related artist top songs to tracks array
-
+	// add related artists top songs to tracks array
 	let artistOne = await spotifyApi.getArtistTopTracks(artists[0], 'CA');
 	artistOne = artistOne.body.tracks;
 	for (i=0;i<3;i++){
 		tracks.push(artistOne[i].uri);
 	}
-
 	let artistTwo = await spotifyApi.getArtistTopTracks(artists[1], 'CA');
 	artistTwo = artistTwo.body.tracks;
 	for (i=0;i<3;i++){
 		tracks.push(artistTwo[i].uri);
 	}
-
 	let artistThree = await spotifyApi.getArtistTopTracks(artists[2], 'CA');
 	artistThree = artistThree.body.tracks;
 	for (i=0;i<3;i++){
 		tracks.push(artistThree[i].uri);
 	}
 
-	// create a playlist
+	// create an empty public playlist
 	var options = {
 	  json: true, 
 	  headers: {
@@ -116,7 +125,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	  .then(response => {
 	    const playlistID = response.body.id;
 
-			// add tracks to playlist
+			// function to add tracks to playlist
 			function populatePlaylist (id, uris) {
 				var url = `https://api.spotify.com/v1/users/${configJSON.username}/playlists/${id}/tracks?uris=${uris}`
 				var options = {
@@ -147,7 +156,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	  	console.log(chalk.red(`
 	ERROR: Please update your bearer token in your config.json
 
-	Get a new one at https://developer.spotify.com/web-api/console/post-playlists/`));
+	Generate a new one at https://developer.spotify.com/web-api/console/post-playlists/`));
 
 	  });
 
