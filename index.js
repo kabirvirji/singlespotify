@@ -2,17 +2,36 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const fs = require('fs');
 const got = require('got');
 const meow = require('meow');
+const chalk = require('chalk');
+const ora = require('ora');
 'use strict';
 
+const spinner = ora('Loading ...').start();
+setTimeout(() => {
+    spinner.color = 'green';
+    spinner.text = 'Loading ...';
+}, 1000);
 const singlespotify = async function singlespotify(inputs, flags) {
 
 	// -a "Kanye West"
 	const artistName = flags['a'];
+	if (artistName === true){
+		spinner.fail('Failed');
+		console.log(chalk.red(`Oops! That search didn't work. Try again please!`))
+		return
+	}
 	// -c path/to/config.json
 	const configFile = flags['c'];
 
 	// get bearer token from path to config file
-	var configJSON = JSON.parse(require('fs').readFileSync(configFile, 'utf8'));
+	try {
+		var configJSON = JSON.parse(require('fs').readFileSync(configFile, 'utf8'));
+	}
+	catch(err) {
+		spinner.fail('Failed');
+		console.log(chalk.red(`Oops! That wasn't a valid config path. Try again please!`))
+		return
+	}
 
 	var tracks = [];
 	var artists = [];
@@ -23,7 +42,13 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	});
 
 	// get artist URI
+
 	const artistSearch = await spotifyApi.searchArtists(artistName);
+	if (artistSearch.body.artists.items[0] === undefined) {
+		spinner.fail('Failed');
+		console.log(chalk.red(`Oops! That search didn't work. Try again please!`))
+		return
+	}
 	let artistURI = artistSearch.body.artists.items[0].uri;
 	artistURI = artistURI.slice(15);
 
@@ -85,7 +110,6 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	  },
 	  body: JSON.stringify({ name: `${artistName}: singlespotify`, public : true})
 	};
-	console.log(options);
 
 	got.post(`https://api.spotify.com/v1/users/${configJSON.username}/playlists`, options)
 	  .then(response => {
@@ -103,9 +127,14 @@ const singlespotify = async function singlespotify(inputs, flags) {
 				};
 				got.post(url, options)
 				  .then(response => {
-				    console.log(response.body);
+				  	spinner.fail('Failed');
+				    console.log(chalk.green(`
+	Your playlist is ready! 
+	It's called "${artistName}: singlespotify"`));
 				  })
-				  .catch(err => { console.log(err) 
+				  .catch(err => { 
+				  	spinner.fail('Failed');
+				  	console.log(err); 
 				  });
 			}
 
@@ -113,24 +142,32 @@ const singlespotify = async function singlespotify(inputs, flags) {
 
 	  })
 
-	  .catch(err => { console.log('Please update your bearer token in your config.json')
+	  .catch(err => { spinner.fail('Failed');
+	  	console.log(chalk.red(`
+	ERROR: Please update your bearer token in your config.json
+
+	Get a new one at https://developer.spotify.com/web-api/console/post-playlists/`));
 
 	  });
 
 }
-
-const cli = meow(`
+spinner.stop();
+const cli = meow(chalk.cyan(`
     Usage
-      $ singlespotify -a "<artist_name>" -c /path/to/config.json
+      $ singlespotify --artist [-a] "artist_name" --config [-c] /path/to/config.json
 
-    Examples
-      $ foo unicorns --rainbow
-      🌈 unicorns 🌈
-`, {
+    Example
+      $ singlespotify -a "Kanye West" -c /Users/kabirvirji/config.json
+
+    For more information visit https://github.com/kabirvirji/singlespotify
+
+`), {
     alias: {
         a: 'artist',
-        c: 'configFile'
+        c: 'config'
     }
-});
+}, [""]
+);
+
 
 singlespotify(cli.input[0], cli.flags);
