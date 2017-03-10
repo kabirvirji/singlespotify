@@ -24,4 +24,5 @@ create a new application to get API keys
 https://developer.spotify.com/my-applications/#!/applications
 
 Then clone the repo, and do
-`node index.js -a "artist name" -c /path/to/config.json`
+`node index.js -a "artist name" -c /path/to/config.json` <br>
+`node index.js --help` For help
