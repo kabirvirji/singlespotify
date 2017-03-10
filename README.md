@@ -2,7 +2,7 @@
 Create Spotify playlists based on one song or artist through the command line
 
 ## Requirements
-Node 7+ (async await included)
+Node 7.7.1+ (async await included, latest version)
 
 ## Usage
 1. Clone repo
