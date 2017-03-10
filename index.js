@@ -15,6 +15,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 
 	// -a "Kanye West"
 	const artistName = flags['a'];
+	// -a "" evaluates to true
 	if (artistName === true){
 		spinner.fail('Failed');
 		console.log(chalk.red(`Oops! That search didn't work. Try again please!`))
