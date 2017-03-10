@@ -5,14 +5,11 @@ const got = require('got');
 const meow = require('meow');
 const chalk = require('chalk');
 const ora = require('ora');
-const spinner = ora('Loading ...').start();
-
-setTimeout(() => {
-    spinner.color = 'green';
-    spinner.text = 'Loading ...';
-}, 1000);
+const spinner = ora('Loading ...');
 
 const singlespotify = async function singlespotify(inputs, flags) {
+
+	spinner.start();
 
 	// -a "Kanye West"
 	const artistName = flags['a'];
@@ -37,7 +34,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		spinner.fail('Failed');
 		console.log(chalk.red(`
 	Oops! That wasn't a valid config path. Try again please!
-	
+
 	See https://github.com/kabirvirji/singlespotify#usage for more information
 	`))
 		return
@@ -46,10 +43,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	var tracks = [];
 	var artists = [];
 
-	const spotifyApi = new SpotifyWebApi({
-	  clientId : configJSON.spotifyid,
-	  clientSecret : configJSON.spotifysecret
-	});
+	const spotifyApi = new SpotifyWebApi();
 
 	// get artist URI
 	const artistSearch = await spotifyApi.searchArtists(artistName);
@@ -75,38 +69,25 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	// get three related artists
 	let relatedArtists = await spotifyApi.getArtistRelatedArtists(artistURI);
 	relatedArtists = relatedArtists.body.artists;
-	for (i=0;i<3;i++){
+	for (var i=0;i<3;i++){
 		var currentArtist = relatedArtists[i].uri;
 		artists.push(currentArtist.slice(15));
 	}
 
-
-	// for (i<0;i<3;i++){
-	// 	console.log(i);
-	// 	let current = await spotifyApi.getArtistTopTracks(artists[i], 'CA');
-	// 	current = current.body.tracks;
-	// 	console.log('current');
-	// 	for (j=0;j<3;j++){
-	// 		console.log(j);
-	// 		tracks.push(current[j].uri);
-	// 	}
-	// }
-	// exit();
-
 	// add related artists top songs to tracks array
 	let artistOne = await spotifyApi.getArtistTopTracks(artists[0], 'CA');
 	artistOne = artistOne.body.tracks;
-	for (i=0;i<3;i++){
+	for (var i=0;i<3;i++){
 		tracks.push(artistOne[i].uri);
 	}
 	let artistTwo = await spotifyApi.getArtistTopTracks(artists[1], 'CA');
 	artistTwo = artistTwo.body.tracks;
-	for (i=0;i<3;i++){
+	for (var i=0;i<3;i++){
 		tracks.push(artistTwo[i].uri);
 	}
 	let artistThree = await spotifyApi.getArtistTopTracks(artists[2], 'CA');
 	artistThree = artistThree.body.tracks;
-	for (i=0;i<3;i++){
+	for (var i=0;i<3;i++){
 		tracks.push(artistThree[i].uri);
 	}
 
@@ -178,6 +159,5 @@ const cli = meow(chalk.cyan(`
     }
 }, [""]
 );
-
 
 singlespotify(cli.input[0], cli.flags);
