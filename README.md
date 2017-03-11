@@ -1,6 +1,6 @@
 # singlespotify 🎵
 
-> Create Spotify playlists based on one song through the command line
+> Create Spotify playlists based on one artist through the command line
 
 ![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
