@@ -143,7 +143,9 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	  });
 
 }
+
 spinner.stop();
+
 const cli = meow(chalk.cyan(`
     Usage
       $ singlespotify --artist [-a] "artist_name" --config [-c] /path/to/config.json
