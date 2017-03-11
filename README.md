@@ -1,6 +1,8 @@
 # singlespotify
 Create Spotify playlists based on one song through the command line
 
+![](singlespotify.gif)
+
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
 
 ## Requirements
