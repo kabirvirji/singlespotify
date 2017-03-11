@@ -37,6 +37,6 @@ You can get the bearer token here: https://developer.spotify.com/web-api/console
 
     For more information visit https://github.com/kabirvirji/singlespotify
 ```
-Shoutout to [kshvmdn](https://github.com/kshmdn) for all the help!
+Shoutout to [kshvmdn](https://github.com/kshvmdn) for all the help!
 
 
