@@ -2,7 +2,7 @@
 
 > Create Spotify playlists based on one song through the command line
 
-https://img.shields.io/badge/node-7.7.1-brightgreen.svg
+![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
 ![](singlespotify.gif)
 
@@ -11,6 +11,7 @@ https://img.shields.io/badge/node-7.7.1-brightgreen.svg
 -->
 
 ## Install
+<bold>Note:</bold> Node version 7.7.1+ required. It can be downloaded [here](https://nodejs.org/dist/v7.7.1/)
 `npm install -g singlespotify`
 
 ## Usage
