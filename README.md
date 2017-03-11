@@ -24,7 +24,8 @@ Create a `config.json` file that looks exactly like this: <br>
   "bearer":""
 }
 ```
-You can get the bearer token here: https://developer.spotify.com/web-api/console/post-playlists/
+You can get the bearer token here: https://developer.spotify.com/web-api/console/post-playlists/ <br>
+Click **GET OAUTH TOKEN** and make sure to check *playlist-modify-public* 
 
 `singlespotify --help`
 
