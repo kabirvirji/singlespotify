@@ -1,28 +1,31 @@
 # singlespotify
-Create Spotify playlists based on one song or artist through the command line
+Create Spotify playlists based on one song through the command line
+
+[![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
 
 ## Requirements
 Node 7.7.1+ (async await included, latest version)
 
 ## Usage
-1. Clone repo
-2. `npm install`
+`npm install -g singlespotify`
+
+```
+    Usage
+      $ singlespotify --artist [-a] "artist_name" --config [-c] /path/to/config.json
+
+    Example
+      $ singlespotify -a "Kanye West" -c /Users/kabirvirji/config.json
+
+    For more information visit https://github.com/kabirvirji/singlespotify
+```
 
 Create a `config.json` file that looks exactly like this: <br>
 ```
 {
-  "spotifyid": "",
-  "spotifysecret": "",
   "username":"",
   "bearer":""
 }
 ```
-You can call it whatever you want but make sure it is a json file that looks like the example above <br><br>
-You can get the API keys and bearer tokens here: <br>
+You can call it anything, but make sure it is a valid json file that looks like the example above. <br><br>
+You can get the bearer token here: <br>
 https://developer.spotify.com/web-api/console/post-playlists/ <br>
-create a new application to get API keys
-https://developer.spotify.com/my-applications/#!/applications
-
-Then clone the repo, and do
-`node index.js -a "artist name" -c /path/to/config.json` <br>
-`node index.js --help` For help
