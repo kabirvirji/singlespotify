@@ -1,12 +1,13 @@
-# singlespotify
-Create Spotify playlists based on one song through the command line
+# singlespotify 
+
+> Create Spotify playlists based on one song through the command line
 
 ![](singlespotify.gif)
+![](ezgif.com-gif-maker.gif)
 
+<!--- 
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
-
-## Requirements
-Node 7.7.1+ (async await included, latest version)
+-->
 
 ## Usage
 `npm install -g singlespotify`
