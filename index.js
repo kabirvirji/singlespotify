@@ -10,12 +10,13 @@ const spinner = ora('Loading ...');
 
 const singlespotify = async function singlespotify(inputs, flags) {
 
+	// ora loading spinner
 	spinner.start();
 
 	// -a "Kanye West"
 	const artistName = flags['a'];
 
-	// -a "" evaluates to true
+	// -a "" evaluates to true due to minimist
 	if (artistName === true){
 		spinner.fail('Failed');
 		console.log(chalk.red(`
