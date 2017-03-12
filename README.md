@@ -11,7 +11,7 @@
 -->
 
 ## Install
-`npm install -g singlespotify` <br><br>
+`$ npm install -g singlespotify` <br><br>
 **Note:** Node version 7.7.1+ required. It can be downloaded [here](https://nodejs.org/en/)
 
 ## Usage
@@ -27,7 +27,7 @@ Create a `config.json` file that looks exactly like this: <br>
 You can get the bearer token here: https://developer.spotify.com/web-api/console/post-playlists/ <br>
 Click **GET OAUTH TOKEN** and make sure to check *playlist-modify-public* 
 
-`singlespotify --help`
+`$ singlespotify --help`
 
 ```
     Usage
