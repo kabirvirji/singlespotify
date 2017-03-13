@@ -24,5 +24,9 @@
     "meow": "^3.7.0",
     "ora": "^1.1.0",
     "spotify-web-api-node": "^2.3.6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-es2017": "^6.22.0"
   }
 }
