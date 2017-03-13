@@ -12,7 +12,7 @@
 
 ## Install
 `$ npm install -g singlespotify` <br><br>
-**Note:** Node version 7.7.1+ required. It can be downloaded [here](https://nodejs.org/en/)
+**Note:** Node version 7.7.1+ required. `$ node -v` to check which version you have installed. The latest version can be downloaded [here](https://nodejs.org/en/)
 
 ## Usage
 `$ singlespotify --artist [-a] "artist_name" --config [-c] /path/to/config.json`
