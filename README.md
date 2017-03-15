@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
-![](singlespotify1.gif)
+![](singlespotify.gif)
 
 <!--- 
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
@@ -17,7 +17,7 @@
 ## Usage
 `$ singlespotify --artist [-a] "artist_name"`
 
-The program will then prompt you for your Spotify username and bearer token. <br><br>
+The program will then prompt you for your Spotify username and bearer token. <br>
 
 You can get the bearer token here: https://developer.spotify.com/web-api/console/post-playlists/ <br>
 Click **GET OAUTH TOKEN** and make sure to check *playlist-modify-public* 
@@ -25,11 +25,15 @@ Click **GET OAUTH TOKEN** and make sure to check *playlist-modify-public*
 `$ singlespotify --help`
 
 ```
-    Usage
-      $ singlespotify --artist [-a] "artist_name" --config [-c] /path/to/config.json
+	Usage
+      $ singlespotify --artist [-a] "artist_name"
+      ? Enter your Spotify username <username>
+      ? Enter your Spotify bearer token <bearer>
 
     Example
-      $ singlespotify -a "Kanye West" -c /Users/kabirvirji/config.json
+      $ singlespotify -a "Kanye West"
+      ? Enter your Spotify username kabirvirji
+      ? Enter your Spotify bearer token ************************************************************
 
     For more information visit https://github.com/kabirvirji/singlespotify
 ```
