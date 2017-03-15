@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
-![](singlespotify1.gif)
+![](singlespotify.gif)
 
 <!--- 
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
