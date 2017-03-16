@@ -36,31 +36,46 @@ function auth() {
 
 const singlespotify = async function singlespotify(inputs, flags) {
 
-	// -a "Kanye West"
-	const artistName = flags['a'];
-	var correctCredentials = false;
+		// "Kanye West"
+		const artistName = inputs;
+		// name of the playlist, optional parameter
+		var playlistName = flags['n'];
 
-	// -a "" evaluates to true due to minimist
-	if (artistName === true){
-		spinner.fail('Failed');
-		config.clear();
-		console.log(chalk.red(`
+		if (playlistName === undefined){
+			playlistName = `${artistName}: singlespotify`;
+		}
+
+		if (playlistName === true){
+			spinner.fail('Failed');
+			config.clear();
+			console.log(chalk.red(`
+		Oops! That name is not valid. Please provide a different playlist name!
+		`))
+			return
+		}
+
+		if (artistName === undefined){
+			spinner.fail('Failed');
+			//config.clear();
+			console.log(chalk.red(`
+		Oops! Remember to add an artist name!
+
+		Example
+		  singlespotify "Kendrick Lamar"
+		`))
+			return
+		}
+
+		// empty string
+		if (artistName === ""){
+			spinner.fail('Failed');
+			config.clear();
+			console.log(chalk.red(`
 	Oops! That search didn't work. Please provide an artist name!
-	`))
-		return
-	}
-	// no flag provided
-	if (artistName === undefined){
-		spinner.fail('Failed');
-		//config.clear();
-		console.log(chalk.red(`
-	Oops! Remember to add the -a flag followed by an artist name!
+		`))
+			return
+		}
 
-	Example
-	  singlespotify -a "Kendrick Lamar"
-	`))
-		return
-	}
 		// ora loading spinner
 		spinner.start();
 
@@ -138,7 +153,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		    'Authorization' : `Bearer ${config.get('bearer')}`,
 		    'Accept' : 'application/json'
 		  },
-		  body: JSON.stringify({ name: `${artistName}: singlespotify`, public : true})
+		  body: JSON.stringify({ name: `${playlistName}`, public : true})
 		};
 
 		got.post(`https://api.spotify.com/v1/users/${config.get('username')}/playlists`, options)
@@ -160,7 +175,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 					  	spinner.succeed('Success!');
 					    console.log(chalk.green(`
 	Your playlist is ready! 
-	It's called "${artistName}: singlespotify"`));
+	It's called "${playlistName}`));
 					  })
 					  .catch(err => { 
 					  	spinner.fail('Failed');
@@ -189,7 +204,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	Generate a new one at https://developer.spotify.com/web-api/console/post-playlists/
 
 	Try again!
-	  $ singlespotify --artist [-a] "artist_name"`));
+	  $ singlespotify "artist_name"`));
 
 		  });
 
@@ -199,9 +214,12 @@ spinner.stop();
 
 const cli = meow(chalk.cyan(`
     Usage
-      $ singlespotify --artist [-a] "artist_name"
+      $ singlespotify "artist_name"
       ? Enter your Spotify username <username>
       ? Enter your Spotify bearer token <bearer>
+
+    Options
+      --name [-n] "playlist name"
 
     Example
       $ singlespotify -a "Kanye West"
@@ -212,9 +230,9 @@ const cli = meow(chalk.cyan(`
 
 `), {
     alias: {
-        a: 'artist'
+        n: 'name'
     }
-}, [""]
+}
 );
 
 (async () => {

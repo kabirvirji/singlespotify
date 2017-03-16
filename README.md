@@ -15,7 +15,7 @@
 **Note:** Node version 7.7.1+ required. `$ node -v` to check which version you have installed. The latest version can be downloaded [here](https://nodejs.org/en/)
 
 ## Usage
-`$ singlespotify --artist [-a] "artist_name"`
+`$ singlespotify "artist_name"`
 
 The program will then prompt you for your Spotify username and bearer token. <br>
 
@@ -30,8 +30,11 @@ Usage
       ? Enter your Spotify username <username>
       ? Enter your Spotify bearer token <bearer>
 
+    Options
+      --name [-n] "playlist name"
+
     Example
-      $ singlespotify -a "Kanye West"
+      $ singlespotify "Kanye West" -n "My awesome playlist!"
       ? Enter your Spotify username kabirvirji
       ? Enter your Spotify bearer token ************************************************************
 
@@ -40,6 +43,7 @@ Usage
 
 ## Changelog
 - **03/15/17** Added [Inquirer](https://github.com/SBoudrias/Inquirer.js) and [conf](https://github.com/sindresorhus/conf) for authentication
+- **03/16/17** Removed `-a` flag and added option to choose playlist name with `-n` flag
 
 
 Shoutout to [kshvmdn](https://github.com/kshvmdn) for all the help!
