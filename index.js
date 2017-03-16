@@ -160,7 +160,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 					  	spinner.succeed('Success!');
 					    console.log(chalk.green(`
 	Your playlist is ready! 
-	It's called "${playlistName}`));
+	It's called "${playlistName}"`));
 					  })
 					  .catch(err => { 
 					  	spinner.fail('Failed');
