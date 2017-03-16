@@ -38,3 +38,6 @@ jspm_packages
 
 # Local configuration
 config.json
+
+# Mac stuff
+.DS_Store
