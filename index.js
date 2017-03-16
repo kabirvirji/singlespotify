@@ -79,7 +79,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		// ora loading spinner
 		spinner.start();
 
-		var tracks = [];
+		var allTracks = [];
 		var artists = [];
 
 		const spotifyApi = new SpotifyWebApi();
@@ -103,7 +103,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		let artistTopTracks = await spotifyApi.getArtistTopTracks(artistURI, 'CA');
 		artistTopTracks = artistTopTracks.body.tracks;
 		for (let artistTrack of artistTopTracks) {
-			tracks.push(artistTrack.uri);
+			allTracks.push(artistTrack.uri);
 		}
 
 		// get three related artists
@@ -116,33 +116,18 @@ const singlespotify = async function singlespotify(inputs, flags) {
 			}
 		}
 
-		// add related artists top songs to tracks array
-		if (artists.length >= 1) {
-			let artistOne = await spotifyApi.getArtistTopTracks(artists[0], 'CA');
-			artistOne = artistOne.body.tracks;
-			for (var i=0;i<3;i++){
-				if (artistOne[i] !== undefined) {
-					tracks.push(artistOne[i].uri);
-				}
-			}
-		}
-		if (artists.length >= 2) {
-			let artistTwo = await spotifyApi.getArtistTopTracks(artists[1], 'CA');
-			artistTwo = artistTwo.body.tracks;
-			for (var i=0;i<3;i++){
-				if (artistTwo[i] !== undefined) {
-					tracks.push(artistTwo[i].uri);
-				}
-			}
-		}
-		if (artists.length >= 3) {
-			let artistThree = await spotifyApi.getArtistTopTracks(artists[2], 'CA');
-			artistThree = artistThree.body.tracks;
-			for (var i=0;i<3;i++){
-				if (artistThree[i] !== undefined) {
-					tracks.push(artistThree[i].uri);
-				}
-			}
+		for (let i = 0; i < Math.min(artists.length, 2); i++) {
+		  let artist = await spotifyApi.getArtistTopTracks(artists[i], 'CA');
+		  
+		  if (!artist || !artist.body || !artist.body.tracks)
+		    continue
+
+		  let { tracks } = artist.body;
+		  
+		  for (let j = 0; j < Math.min(tracks.length, 3); j++) {
+		    if (tracks[j] && tracks[j].uri)
+		      allTracks.push(tracks[j].uri)
+		  }
 		}
 
 		// create an empty public playlist
@@ -189,7 +174,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 					  });
 				}
 
-				populatePlaylist(playlistID, tracks);
+				populatePlaylist(playlistID, allTracks);
 
 		  })
 
