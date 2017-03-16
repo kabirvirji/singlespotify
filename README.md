@@ -5,7 +5,6 @@
 ![](https://img.shields.io/badge/node-7.7.1-brightgreen.svg)
 
 ![](singlespotify.gif)
-![](playlist.png)
 
 <!--- 
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
@@ -41,6 +40,8 @@ Usage
 
     For more information visit https://github.com/kabirvirji/singlespotify
 ```
+
+![](playlist.png)
 
 ## Changelog
 - **03/15/17** Added [Inquirer](https://github.com/SBoudrias/Inquirer.js) and [conf](https://github.com/sindresorhus/conf) for authentication
