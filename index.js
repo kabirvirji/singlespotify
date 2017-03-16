@@ -58,20 +58,20 @@ const singlespotify = async function singlespotify(inputs, flags) {
 			spinner.fail('Failed');
 			//config.clear();
 			console.log(chalk.red(`
-		Oops! Remember to add an artist name!
+	Oops! Remember to add an artist name!
 
-		Example
-		  singlespotify "Kendrick Lamar"
+	Example
+		singlespotify "Kendrick Lamar"
 		`))
 			return
 		}
 
 		// empty string
-		if (artistName === ""){
+		if (artistName.trim() === ""){
 			spinner.fail('Failed');
 			config.clear();
 			console.log(chalk.red(`
-	Oops! That search didn't work. Please provide an artist name!
+	Oops! Artist name can't be empty. Please provide an artist name!
 		`))
 			return
 		}
