@@ -26,7 +26,7 @@ Click **GET OAUTH TOKEN** and make sure to check *playlist-modify-public*
 
 ```
 Usage
-      $ singlespotify --artist [-a] "artist_name"
+      $ singlespotify "artist_name"
       ? Enter your Spotify username <username>
       ? Enter your Spotify bearer token <bearer>
 
