@@ -37,7 +37,6 @@ function auth() {
 
 const singlespotify = async function singlespotify(inputs, flags) {
 
-
 		// "Kanye West"
 		const artistName = inputs;
 		// name of the playlist, optional parameter
@@ -58,7 +57,6 @@ const singlespotify = async function singlespotify(inputs, flags) {
 
 		if (artistName === undefined){
 			spinner.fail('Failed');
-			//config.clear();
 			console.log(chalk.red(`
 	Oops! Remember to add an artist name!
 
