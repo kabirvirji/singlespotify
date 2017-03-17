@@ -40,7 +40,7 @@ Usage
 
     For more information visit https://github.com/kabirvirji/singlespotify
 ```
-<br>
+
 ![](playlist.png)
 
 ## Changelog
