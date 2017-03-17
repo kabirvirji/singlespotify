@@ -8,6 +8,8 @@ const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
 const Conf = require('conf');
+const updateNotifier = require('update-notifier');
+const pkg = require('./package.json');
 const spinner = ora('Loading ...');
 
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
@@ -161,7 +163,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 					    console.log(chalk.green(`
 	Your playlist is ready! 
 	It's called "${playlistName}"`));
-					  })
+	updateNotifier({pkg}).notify();})
 					  .catch(err => { 
 					  	spinner.fail('Failed');
 					  	// don't need to reset config since credentials are correct at this point
