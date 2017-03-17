@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 const SpotifyWebApi = require('spotify-web-api-node');
-const fs = require('fs');
 const got = require('got');
 const meow = require('meow');
 const chalk = require('chalk');
@@ -11,8 +10,6 @@ const Conf = require('conf');
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
 const spinner = ora('Loading ...');
-
-updateNotifier({pkg}).notify();
 
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
 const config = new Conf();
@@ -39,6 +36,7 @@ function auth() {
 }
 
 const singlespotify = async function singlespotify(inputs, flags) {
+
 
 		// "Kanye West"
 		const artistName = inputs;
@@ -223,6 +221,8 @@ const cli = meow(chalk.cyan(`
     }
 }
 );
+
+updateNotifier({pkg}).notify();
 
 (async () => {
 
