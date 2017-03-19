@@ -46,6 +46,7 @@ Usage
 ## Changelog
 - **03/15/17** Added [Inquirer](https://github.com/SBoudrias/Inquirer.js) and [conf](https://github.com/sindresorhus/conf) for authentication
 - **03/16/17** Removed `-a` flag and added option to choose playlist name with `-n` flag
+- **03/19/17** Used [update-notifier](https://github.com/yeoman/update-notifier) to notify users about updates 
 
 
 Shoutout to [kshvmdn](https://github.com/kshvmdn) for all the help!
