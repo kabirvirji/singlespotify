@@ -10,6 +10,8 @@
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
 -->
 
+**NOTICE:** Spotify made some changes to their API since this was made, so certain parts may or may not be functional. Will fix ASAP
+
 ## Install
 `$ npm install -g singlespotify` <br><br>
 **Note:** Node version 7.7.1+ required. `$ node -v` to check which version you have installed. The latest version can be downloaded [here](https://nodejs.org/en/)
