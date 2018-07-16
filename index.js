@@ -14,6 +14,9 @@ const spinner = ora('Loading ...');
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
 const config = new Conf();
 
+// api update
+// needs auth for common calls
+
 function auth() {
   return new Promise((resolve, reject) => {
     inquirer.prompt([
