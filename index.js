@@ -10,37 +10,30 @@ const Conf = require('conf');
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
 const spinner = ora('Loading ...');
+const open = require('open');
 
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
 const config = new Conf();
 
-// api update
-// needs auth for common calls
+// another option is to open the spotify auth page
+// then redirect to my own server, that just displays the unique the token that is in the URL 
+// a node heroku server that displays on the front end whatever info it gets POSTed with 
 
-function auth() {
-  return new Promise((resolve, reject) => {
-    inquirer.prompt([
-        {
-          type: 'input',
-          message: 'Enter your Spotify username',
-          name: 'username'
-        },
-        {
-          type: 'password',
-          message: 'Enter your Spotify bearer token',
-          name: 'bearer'
-        }
-    ]).then(function (answers) {
-      var answer = JSON.stringify(answers);
-      config.set(answers);
-      resolve(true);
-    }).catch(err => reject(err));
-  });
-}
+var authPromise = new Promise(async function(resolve, reject) {
+	console.log("authPromise")
+	await open('https://accounts.spotify.com/authorize', {wait: true}); // have to exit chrome for this to resolve 
+	resolve("token")
+	// reject("error")
+	// make api call to heroku endpoint
+	// send app tokens
+	// open BROWSER for auth
+	// get back access token
+	// store in conf (no need for inquirer)
+})
 
 const singlespotify = async function singlespotify(inputs, flags) {
 
-		// "Kanye West"
+		// "Young Thug"
 		const artistName = inputs;
 		// name of the playlist, optional parameter
 		var playlistName = flags['n'];
@@ -51,7 +44,7 @@ const singlespotify = async function singlespotify(inputs, flags) {
 
 		if (playlistName === true){
 			spinner.fail('Failed');
-			config.clear();
+			config.clear(); // might not need this if we store token using config
 			console.log(chalk.red(`
 		Oops! That name is not valid. Please provide a different playlist name!
 		`))
@@ -210,7 +203,7 @@ const cli = meow(chalk.cyan(`
       --name [-n] "playlist name"
 
     Example
-      $ singlespotify -a "Kanye West"
+      $ singlespotify -a "Young Thug"
       ? Enter your Spotify username kabirvirji
       ? Enter your Spotify bearer token ************************************************************
 
@@ -227,9 +220,14 @@ updateNotifier({pkg}).notify();
 
 (async () => {
 
-if (config.get('username') === undefined || config.get('bearer') === undefined) {
-	let authorization = await auth();
+if (config.get('token') === undefined) {
+	// var token = await auth();
+	authPromise.then(function() {
+		console.log("yes")
+	}, function() {
+		console.log("error")
+	})
+	// singlespotify(cli.input[0], cli.flags, token);
 }
-singlespotify(cli.input[0], cli.flags);
 
 })()
