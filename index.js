@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 'use strict';
-const SpotifyWebApi = require('spotify-web-api-node');
-const got = require('got');
 const meow = require('meow');
 const chalk = require('chalk');
 const ora = require('ora');
@@ -10,7 +8,6 @@ const Conf = require('conf');
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
 const spinner = ora('Loading ...');
-const open = require('open');
 
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
 const config = new Conf();
