@@ -10,8 +10,6 @@
 [![asciicast](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5.png)](https://asciinema.org/a/4k49ag6gy3bknaa6ryoubhcy5)
 -->
 
-**NOTICE:** Spotify made some changes to their API since this was made, so certain parts may or may not be functional. Will fix ASAP
-
 ## Install
 `$ npm install -g singlespotify` <br><br>
 **Note:** Node version 7.7.1+ required. `$ node -v` to check which version you have installed. The latest version can be downloaded [here](https://nodejs.org/en/)
@@ -21,7 +19,7 @@
 
 The program will then prompt you for your Spotify username and bearer token. <br>
 
-You can get the bearer token here: https://developer.spotify.com/web-api/console/post-playlists/ <br>
+You can get the bearer token here: https://developer.spotify.com/console/post-playlists/ <br>
 Click **GET OAUTH TOKEN** and make sure to check *playlist-modify-public* 
 
 `$ singlespotify --help`
@@ -49,6 +47,7 @@ Usage
 - **03/15/17** Added [Inquirer](https://github.com/SBoudrias/Inquirer.js) and [conf](https://github.com/sindresorhus/conf) for authentication
 - **03/16/17** Removed `-a` flag and added option to choose playlist name with `-n` flag
 - **03/19/17** Used [update-notifier](https://github.com/yeoman/update-notifier) to notify users about updates 
+- **11/03/19** Updated to accommodate API changes 
 
 
 Shoutout to [kshvmdn](https://github.com/kshvmdn) for all the help!
