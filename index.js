@@ -60,9 +60,9 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		// name of the playlist, optional parameter
 		var playlistName = flags['n'];
 
-		// if (playlistName === undefined){
-		// 	playlistName = `${artistName}: singlespotify`;
-		// }
+		if (playlistName === undefined) {
+			playlistName = `${artistName}: singlespotify`;
+		}
 
 		// if (playlistName === true){
 		// 	spinner.fail('Failed');
@@ -94,10 +94,12 @@ const singlespotify = async function singlespotify(inputs, flags) {
 			return
 		}
 
-
+		// ora loading spinner
+		spinner.start();
 
 		var allTracks = [];
 		var artists = [];
+		var relatedTracks = []
 
 		// const spotifyApi = new SpotifyWebApi();
 
@@ -120,52 +122,35 @@ const singlespotify = async function singlespotify(inputs, flags) {
 				for (let artistTrack of res.tracks) {
 					allTracks.push(artistTrack.uri);
 				}
-				console.log(allTracks)
 				spotifyApi.getArtistRelatedArtists(artistID, token).then(res => {
-					for (var i=0;i<3;i++){
+					for (var i=0;i<5;i++){
 						if (res.artists[i] !== undefined) {
 							artists.push(res.artists[i].id);
 						}
 					}
 					// addRelatedTracks(tracks, )
-					for (let i = 0; i < Math.min(artists.length, 2); i++) {
+
+					for (let i = 0; i < Math.min(artists.length, 5); i++) {
 						spotifyApi.getArtistTopTracks(artists[i], token).then(res => {
-							let tracks = res.tracks;
-							for (let j = 0; j < Math.min(tracks.length, 3); j++) {
-								if (tracks[j] && tracks[j].uri)
-								allTracks.push(tracks[j].uri)
-								console.log("pushed")
-								// console.log(allTracks)
+							for (let artistTrack of res.tracks) {
+								relatedTracks.push(artistTrack.uri);
 							}
 						})
 					}
-					
-				})
+			
 			})
 		})
+	})
 		// console.log(artistSearch.data)
-		while (allTracks.length == 0) {
-			// ora loading spinner
-			spinner.start();
-		}
-		spinner.stop();
+		var timeout = setInterval(function() {
+			if(relatedTracks.length !== 0 && allTracks.length !== 0) {
+				const tracks = allTracks.concat(relatedTracks)
+				clearInterval(timeout);
+				// call playlist gen function using allTracks
+				spotifyApi.createPlaylist(playlistName, token).then(res => spotifyApi.populatePlaylist(res.id, tracks, token).then(res => console.log("success")))
+			}
+		}, 400);
 		return
-
-		for (let i = 0; i < Math.min(artists.length, 2); i++) {
-		  let artist = await spotifyApi.getArtistTopTracks(artists[i], 'CA');
-		  
-		  if (!artist || !artist.body || !artist.body.tracks)
-		    continue
-
-		  let { tracks } = artist.body;
-		  
-		  for (let j = 0; j < Math.min(tracks.length, 3); j++) {
-		    if (tracks[j] && tracks[j].uri)
-		      allTracks.push(tracks[j].uri)
-		  }
-		}
-
-		// do all playlist stuff elsewhere and pass tracks array
 
 		// create an empty public playlist
 		var options = {

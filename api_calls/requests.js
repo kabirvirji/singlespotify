@@ -46,3 +46,37 @@ exports.getArtistRelatedArtists = function(artistID, token) {
         .then(res => res.data)
         .catch (err => console.error(err))
 }
+
+exports.createPlaylist = function(name, token) {
+    return axios({
+        method: 'POST',
+        url: `https://api.spotify.com/v1/me/playlists`,
+        data: {
+            "name": name,
+            "description": "Playlist generated using singlespotify by Kabir Virji",
+            "public": true
+        },
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }})
+        .then(res => res.data)
+        .catch (err => console.error(err))
+}
+
+exports.populatePlaylist = function(id, tracks, token) {
+    return axios({
+        method: 'POST',
+        url: `https://api.spotify.com/v1/playlists/${id}/tracks`,
+        data: {
+            "uris": tracks
+        },
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }})
+        .then(res => res.data)
+        .catch (err => console.error(err))
+}
