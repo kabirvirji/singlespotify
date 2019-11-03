@@ -15,7 +15,6 @@ exports.searchArtists = function(artistName, token) {
             'Authorization': `Bearer ${token}`,
         }})
         .then(res => res.data)
-        .catch (err => console.error(err))
 }
 
 exports.getArtistTopTracks = function(artistID, token) {
@@ -31,7 +30,6 @@ exports.getArtistTopTracks = function(artistID, token) {
             'Authorization': `Bearer ${token}`,
         }})
         .then(res => res.data)
-        .catch (err => console.error(err))
 }
 
 exports.getArtistRelatedArtists = function(artistID, token) {
@@ -44,7 +42,6 @@ exports.getArtistRelatedArtists = function(artistID, token) {
             'Authorization': `Bearer ${token}`,
         }})
         .then(res => res.data)
-        .catch (err => console.error(err))
 }
 
 exports.createPlaylist = function(name, token) {
@@ -62,7 +59,6 @@ exports.createPlaylist = function(name, token) {
             'Authorization': `Bearer ${token}`,
         }})
         .then(res => res.data)
-        .catch (err => console.error(err))
 }
 
 exports.populatePlaylist = function(id, tracks, token) {
@@ -78,5 +74,4 @@ exports.populatePlaylist = function(id, tracks, token) {
             'Authorization': `Bearer ${token}`,
         }})
         .then(res => res.data)
-        .catch (err => console.error(err))
 }

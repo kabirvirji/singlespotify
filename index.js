@@ -16,22 +16,6 @@ const open = require('open');
 const config = new Conf();
 const spotifyApi = require('./api_calls/requests')
 
-// another option is to open the spotify auth page
-// then redirect to my own server, that just displays the unique the token that is in the URL 
-// a node heroku server that displays on the front end whatever info it gets POSTed with 
-
-// var authPromise = new Promise(async function(resolve, reject) {
-// 	console.log("authPromise")
-// 	await open('https://accounts.spotify.com/authorize', {wait: true}); // have to exit chrome for this to resolve 
-// 	resolve("token")
-// 	// reject("error")
-// 	// make api call to heroku endpoint
-// 	// send app tokens
-// 	// open BROWSER for auth
-// 	// get back access token
-// 	// store in conf (no need for inquirer)
-// })
-
 function auth() {
 	return new Promise((resolve, reject) => {
 	  inquirer.prompt([
@@ -64,15 +48,6 @@ const singlespotify = async function singlespotify(inputs, flags) {
 			playlistName = `${artistName}: singlespotify`;
 		}
 
-		// if (playlistName === true){
-		// 	spinner.fail('Failed');
-		// 	config.clear(); // might not need this if we store token using config
-		// 	console.log(chalk.red(`
-		// Oops! That name is not valid. Please provide a different playlist name!
-		// `))
-		// 	return
-		// }
-
 		if (artistName === undefined){
 			spinner.fail('Failed');
 			console.log(chalk.red(`
@@ -101,8 +76,6 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		var artists = [];
 		var relatedTracks = []
 
-		// const spotifyApi = new SpotifyWebApi();
-
 		// get artist URI
 		let token = config.get('bearer')
 		// const artistSearch = await 
@@ -114,10 +87,9 @@ const singlespotify = async function singlespotify(inputs, flags) {
 	
 		Oops! That search didn't work. Try again please!
 			`))
-				return
+				process.exit()
 			}
 			let artistID = res.artists.items[0].id;
-			console.log(artistID)
 			spotifyApi.getArtistTopTracks(artistID, token).then(res => {
 				for (let artistTrack of res.tracks) {
 					allTracks.push(artistTrack.uri);
@@ -128,7 +100,6 @@ const singlespotify = async function singlespotify(inputs, flags) {
 							artists.push(res.artists[i].id);
 						}
 					}
-					// addRelatedTracks(tracks, )
 
 					for (let i = 0; i < Math.min(artists.length, 5); i++) {
 						spotifyApi.getArtistTopTracks(artists[i], token).then(res => {
@@ -141,83 +112,39 @@ const singlespotify = async function singlespotify(inputs, flags) {
 			})
 		})
 	})
+	.catch(async err => { 
+		spinner.fail('Failed');
+		config.clear();
+		console.log(chalk.red(`
+ERROR: Incorrect username or bearer token
+
+You might need to update your bearer token
+
+Generate a new one at https://developer.spotify.com/console/post-playlists/
+
+Try again!
+$ singlespotify "artist_name"`));
+		process.exit()
+
+	});
 		// console.log(artistSearch.data)
 		var timeout = setInterval(function() {
 			if(relatedTracks.length !== 0 && allTracks.length !== 0) {
 				const tracks = allTracks.concat(relatedTracks)
 				clearInterval(timeout);
 				// call playlist gen function using allTracks
-				spotifyApi.createPlaylist(playlistName, token).then(res => spotifyApi.populatePlaylist(res.id, tracks, token).then(res => console.log("success")))
+				spotifyApi.createPlaylist(playlistName, token).then(res => spotifyApi.populatePlaylist(res.id, tracks, token).then(res => {
+					spinner.succeed('Success!');
+					console.log(chalk.green(`
+Your playlist is ready! 
+It's called "${playlistName}"`));
+				}))
 			}
 		}, 400);
-		return
-
-		// create an empty public playlist
-		var options = {
-		  json: true, 
-		  headers: {
-		    'Content-type': 'application/json',
-		    'Authorization' : `Bearer ${config.get('bearer')}`,
-		    'Accept' : 'application/json'
-		  },
-		  body: JSON.stringify({ name: `${playlistName}`, public : true})
-		};
-
-		got.post(`https://api.spotify.com/v1/users/${config.get('username')}/playlists`, options)
-		  .then(response => {
-		    const playlistID = response.body.id;
-
-				// function to add tracks to playlist
-				function populatePlaylist (id, uris) {
-					var url = `https://api.spotify.com/v1/users/${config.get('username')}/playlists/${id}/tracks?uris=${uris}`
-					var options = {
-					  json: true, 
-					  headers: {
-					    'Content-type': 'application/json',
-					    'Authorization' : `Bearer ${config.get('bearer')}`,
-					  }
-					};
-					got.post(url, options)
-					  .then(response => {
-					  	spinner.succeed('Success!');
-					    console.log(chalk.green(`
-	Your playlist is ready! 
-	It's called "${playlistName}"`));
-					  })
-					  .catch(err => { 
-					  	spinner.fail('Failed');
-					  	// don't need to reset config since credentials are correct at this point
-					  	console.log(chalk.red(`
-	There was an error adding songs to the playlist. 
-
-	However, a playlist was created. 
-
-	Please try a different search.`)); 
-					  });
-				}
-
-				populatePlaylist(playlistID, allTracks);
-
-		  })
-
-		  .catch(async err => { 
-		  	spinner.fail('Failed');
-		  	config.clear();
-		  	console.log(chalk.red(`
-	ERROR: Incorrect username or bearer token
-
-	You might need to update your bearer token
-
-	Generate a new one at https://developer.spotify.com/web-api/console/post-playlists/
-
-	Try again!
-	  $ singlespotify "artist_name"`));
-
-		  });
 
 }
 
-spinner.stop();
+spinner.stop(); // like return
 
 const cli = meow(chalk.cyan(`
     Usage
@@ -246,15 +173,6 @@ updateNotifier({pkg}).notify();
 
 (async () => {
 
-// if (config.get('token') === undefined) {
-// 	// var token = await auth();
-// 	authPromise.then(function() {
-// 		console.log("yes")
-// 	}, function() {
-// 		console.log("error")
-// 	})
-// 	// singlespotify(cli.input[0], cli.flags, token);
-// }
 if (config.get('username') === undefined || config.get('bearer') === undefined) {
 	let authorization = await auth();
 }
