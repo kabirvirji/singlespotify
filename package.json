@@ -1,7 +1,7 @@
 {
   "name": "singlespotify",
   "productName": "singlespotify",
-  "version": "1.1.7",
+  "version": "2.0.0",
   "description": "Create Spotify playlists based on one artist through the command line!",
   "license": "MIT",
   "repository": "kabirvirji/singlespotify",
