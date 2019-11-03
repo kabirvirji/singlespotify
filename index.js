@@ -10,52 +10,42 @@ const Conf = require('conf');
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
 const spinner = ora('Loading ...');
+const open = require('open');
 
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
 const config = new Conf();
-
-// api update
-// needs auth for common calls
+const spotifyApi = require('./api_calls/requests')
 
 function auth() {
-  return new Promise((resolve, reject) => {
-    inquirer.prompt([
-        {
-          type: 'input',
-          message: 'Enter your Spotify username',
-          name: 'username'
-        },
-        {
-          type: 'password',
-          message: 'Enter your Spotify bearer token',
-          name: 'bearer'
-        }
-    ]).then(function (answers) {
-      var answer = JSON.stringify(answers);
-      config.set(answers);
-      resolve(true);
-    }).catch(err => reject(err));
-  });
-}
+	return new Promise((resolve, reject) => {
+	  inquirer.prompt([
+		  {
+			type: 'input',
+			message: 'Enter your Spotify username',
+			name: 'username'
+		  },
+		  {
+			type: 'password',
+			message: 'Enter your Spotify bearer token',
+			name: 'bearer'
+		  }
+	  ]).then(function (answers) {
+		var answer = JSON.stringify(answers);
+		config.set(answers);
+		resolve(true);
+	  }).catch(err => reject(err));
+	});
+  }
 
 const singlespotify = async function singlespotify(inputs, flags) {
 
-		// "Kanye West"
+		// "Young Thug"
 		const artistName = inputs;
 		// name of the playlist, optional parameter
 		var playlistName = flags['n'];
 
-		if (playlistName === undefined){
+		if (playlistName === undefined) {
 			playlistName = `${artistName}: singlespotify`;
-		}
-
-		if (playlistName === true){
-			spinner.fail('Failed');
-			config.clear();
-			console.log(chalk.red(`
-		Oops! That name is not valid. Please provide a different playlist name!
-		`))
-			return
 		}
 
 		if (artistName === undefined){
@@ -84,121 +74,77 @@ const singlespotify = async function singlespotify(inputs, flags) {
 
 		var allTracks = [];
 		var artists = [];
-
-		const spotifyApi = new SpotifyWebApi();
+		var relatedTracks = []
 
 		// get artist URI
-		const artistSearch = await spotifyApi.searchArtists(artistName);
-		// error check for invalid search
-		if (artistSearch.body.artists.items[0] === undefined) {
-			spinner.fail('Failed');
-			config.clear();
-			console.log(chalk.red(`
-
-	Oops! That search didn't work. Try again please!
-		`))
-			return
-		}
-		let artistURI = artistSearch.body.artists.items[0].uri;
-		artistURI = artistURI.slice(15);
-
-		// get artist top tracks
-		let artistTopTracks = await spotifyApi.getArtistTopTracks(artistURI, 'CA');
-		artistTopTracks = artistTopTracks.body.tracks;
-		for (let artistTrack of artistTopTracks) {
-			allTracks.push(artistTrack.uri);
-		}
-
-		// get three related artists
-		let relatedArtists = await spotifyApi.getArtistRelatedArtists(artistURI);
-		relatedArtists = relatedArtists.body.artists;
-		for (var i=0;i<3;i++){
-			if (relatedArtists[i] !== undefined) {
-				var currentArtist = relatedArtists[i].uri;
-				artists.push(currentArtist.slice(15));
+		let token = config.get('bearer')
+		// const artistSearch = await 
+		spotifyApi.searchArtists(artistName, token).then(res => {
+			if (res.artists.items[0] === undefined) {
+				spinner.fail('Failed');
+				config.clear();
+				console.log(chalk.red(`
+	
+		Oops! That search didn't work. Try again please!
+			`))
+				process.exit()
 			}
-		}
-
-		for (let i = 0; i < Math.min(artists.length, 2); i++) {
-		  let artist = await spotifyApi.getArtistTopTracks(artists[i], 'CA');
-		  
-		  if (!artist || !artist.body || !artist.body.tracks)
-		    continue
-
-		  let { tracks } = artist.body;
-		  
-		  for (let j = 0; j < Math.min(tracks.length, 3); j++) {
-		    if (tracks[j] && tracks[j].uri)
-		      allTracks.push(tracks[j].uri)
-		  }
-		}
-
-		// create an empty public playlist
-		var options = {
-		  json: true, 
-		  headers: {
-		    'Content-type': 'application/json',
-		    'Authorization' : `Bearer ${config.get('bearer')}`,
-		    'Accept' : 'application/json'
-		  },
-		  body: JSON.stringify({ name: `${playlistName}`, public : true})
-		};
-
-		got.post(`https://api.spotify.com/v1/users/${config.get('username')}/playlists`, options)
-		  .then(response => {
-		    const playlistID = response.body.id;
-
-				// function to add tracks to playlist
-				function populatePlaylist (id, uris) {
-					var url = `https://api.spotify.com/v1/users/${config.get('username')}/playlists/${id}/tracks?uris=${uris}`
-					var options = {
-					  json: true, 
-					  headers: {
-					    'Content-type': 'application/json',
-					    'Authorization' : `Bearer ${config.get('bearer')}`,
-					  }
-					};
-					got.post(url, options)
-					  .then(response => {
-					  	spinner.succeed('Success!');
-					    console.log(chalk.green(`
-	Your playlist is ready! 
-	It's called "${playlistName}"`));
-					  })
-					  .catch(err => { 
-					  	spinner.fail('Failed');
-					  	// don't need to reset config since credentials are correct at this point
-					  	console.log(chalk.red(`
-	There was an error adding songs to the playlist. 
-
-	However, a playlist was created. 
-
-	Please try a different search.`)); 
-					  });
+			let artistID = res.artists.items[0].id;
+			spotifyApi.getArtistTopTracks(artistID, token).then(res => {
+				for (let artistTrack of res.tracks) {
+					allTracks.push(artistTrack.uri);
 				}
+				spotifyApi.getArtistRelatedArtists(artistID, token).then(res => {
+					for (var i=0;i<5;i++){
+						if (res.artists[i] !== undefined) {
+							artists.push(res.artists[i].id);
+						}
+					}
 
-				populatePlaylist(playlistID, allTracks);
+					for (let i = 0; i < Math.min(artists.length, 5); i++) {
+						spotifyApi.getArtistTopTracks(artists[i], token).then(res => {
+							for (let artistTrack of res.tracks) {
+								relatedTracks.push(artistTrack.uri);
+							}
+						})
+					}
+			
+			})
+		})
+	})
+	.catch(async err => { 
+		spinner.fail('Failed');
+		config.clear();
+		console.log(chalk.red(`
+ERROR: Incorrect username or bearer token
 
-		  })
+You might need to update your bearer token
 
-		  .catch(async err => { 
-		  	spinner.fail('Failed');
-		  	config.clear();
-		  	console.log(chalk.red(`
-	ERROR: Incorrect username or bearer token
+Generate a new one at https://developer.spotify.com/console/post-playlists/
 
-	You might need to update your bearer token
+Try again!
+$ singlespotify "artist_name"`));
+		process.exit()
 
-	Generate a new one at https://developer.spotify.com/web-api/console/post-playlists/
-
-	Try again!
-	  $ singlespotify "artist_name"`));
-
-		  });
+	});
+		// console.log(artistSearch.data)
+		var timeout = setInterval(function() {
+			if(relatedTracks.length !== 0 && allTracks.length !== 0) {
+				const tracks = allTracks.concat(relatedTracks)
+				clearInterval(timeout);
+				// call playlist gen function using allTracks
+				spotifyApi.createPlaylist(playlistName, token).then(res => spotifyApi.populatePlaylist(res.id, tracks, token).then(res => {
+					spinner.succeed('Success!');
+					console.log(chalk.green(`
+Your playlist is ready! 
+It's called "${playlistName}"`));
+				}))
+			}
+		}, 400);
 
 }
 
-spinner.stop();
+spinner.stop(); // like return
 
 const cli = meow(chalk.cyan(`
     Usage
@@ -210,7 +156,7 @@ const cli = meow(chalk.cyan(`
       --name [-n] "playlist name"
 
     Example
-      $ singlespotify -a "Kanye West"
+      $ singlespotify -a "Young Thug"
       ? Enter your Spotify username kabirvirji
       ? Enter your Spotify bearer token ************************************************************
 
