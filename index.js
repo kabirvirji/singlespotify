@@ -14,22 +14,44 @@ const open = require('open');
 
 // config file stored in /Users/{home}/Library/Preferences/{project-name}
 const config = new Conf();
+const spotifyApi = require('./api_calls/requests')
 
 // another option is to open the spotify auth page
 // then redirect to my own server, that just displays the unique the token that is in the URL 
 // a node heroku server that displays on the front end whatever info it gets POSTed with 
 
-var authPromise = new Promise(async function(resolve, reject) {
-	console.log("authPromise")
-	await open('https://accounts.spotify.com/authorize', {wait: true}); // have to exit chrome for this to resolve 
-	resolve("token")
-	// reject("error")
-	// make api call to heroku endpoint
-	// send app tokens
-	// open BROWSER for auth
-	// get back access token
-	// store in conf (no need for inquirer)
-})
+// var authPromise = new Promise(async function(resolve, reject) {
+// 	console.log("authPromise")
+// 	await open('https://accounts.spotify.com/authorize', {wait: true}); // have to exit chrome for this to resolve 
+// 	resolve("token")
+// 	// reject("error")
+// 	// make api call to heroku endpoint
+// 	// send app tokens
+// 	// open BROWSER for auth
+// 	// get back access token
+// 	// store in conf (no need for inquirer)
+// })
+
+function auth() {
+	return new Promise((resolve, reject) => {
+	  inquirer.prompt([
+		  {
+			type: 'input',
+			message: 'Enter your Spotify username',
+			name: 'username'
+		  },
+		  {
+			type: 'password',
+			message: 'Enter your Spotify bearer token',
+			name: 'bearer'
+		  }
+	  ]).then(function (answers) {
+		var answer = JSON.stringify(answers);
+		config.set(answers);
+		resolve(true);
+	  }).catch(err => reject(err));
+	});
+  }
 
 const singlespotify = async function singlespotify(inputs, flags) {
 
@@ -38,18 +60,18 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		// name of the playlist, optional parameter
 		var playlistName = flags['n'];
 
-		if (playlistName === undefined){
-			playlistName = `${artistName}: singlespotify`;
-		}
+		// if (playlistName === undefined){
+		// 	playlistName = `${artistName}: singlespotify`;
+		// }
 
-		if (playlistName === true){
-			spinner.fail('Failed');
-			config.clear(); // might not need this if we store token using config
-			console.log(chalk.red(`
-		Oops! That name is not valid. Please provide a different playlist name!
-		`))
-			return
-		}
+		// if (playlistName === true){
+		// 	spinner.fail('Failed');
+		// 	config.clear(); // might not need this if we store token using config
+		// 	console.log(chalk.red(`
+		// Oops! That name is not valid. Please provide a different playlist name!
+		// `))
+		// 	return
+		// }
 
 		if (artistName === undefined){
 			spinner.fail('Failed');
@@ -72,45 +94,62 @@ const singlespotify = async function singlespotify(inputs, flags) {
 			return
 		}
 
-		// ora loading spinner
-		spinner.start();
+
 
 		var allTracks = [];
 		var artists = [];
 
-		const spotifyApi = new SpotifyWebApi();
+		// const spotifyApi = new SpotifyWebApi();
 
 		// get artist URI
-		const artistSearch = await spotifyApi.searchArtists(artistName);
-		// error check for invalid search
-		if (artistSearch.body.artists.items[0] === undefined) {
-			spinner.fail('Failed');
-			config.clear();
-			console.log(chalk.red(`
-
-	Oops! That search didn't work. Try again please!
-		`))
-			return
-		}
-		let artistURI = artistSearch.body.artists.items[0].uri;
-		artistURI = artistURI.slice(15);
-
-		// get artist top tracks
-		let artistTopTracks = await spotifyApi.getArtistTopTracks(artistURI, 'CA');
-		artistTopTracks = artistTopTracks.body.tracks;
-		for (let artistTrack of artistTopTracks) {
-			allTracks.push(artistTrack.uri);
-		}
-
-		// get three related artists
-		let relatedArtists = await spotifyApi.getArtistRelatedArtists(artistURI);
-		relatedArtists = relatedArtists.body.artists;
-		for (var i=0;i<3;i++){
-			if (relatedArtists[i] !== undefined) {
-				var currentArtist = relatedArtists[i].uri;
-				artists.push(currentArtist.slice(15));
+		let token = config.get('bearer')
+		// const artistSearch = await 
+		spotifyApi.searchArtists(artistName, token).then(res => {
+			if (res.artists.items[0] === undefined) {
+				spinner.fail('Failed');
+				config.clear();
+				console.log(chalk.red(`
+	
+		Oops! That search didn't work. Try again please!
+			`))
+				return
 			}
+			let artistID = res.artists.items[0].id;
+			console.log(artistID)
+			spotifyApi.getArtistTopTracks(artistID, token).then(res => {
+				for (let artistTrack of res.tracks) {
+					allTracks.push(artistTrack.uri);
+				}
+				console.log(allTracks)
+				spotifyApi.getArtistRelatedArtists(artistID, token).then(res => {
+					for (var i=0;i<3;i++){
+						if (res.artists[i] !== undefined) {
+							artists.push(res.artists[i].id);
+						}
+					}
+					// addRelatedTracks(tracks, )
+					for (let i = 0; i < Math.min(artists.length, 2); i++) {
+						spotifyApi.getArtistTopTracks(artists[i], token).then(res => {
+							let tracks = res.tracks;
+							for (let j = 0; j < Math.min(tracks.length, 3); j++) {
+								if (tracks[j] && tracks[j].uri)
+								allTracks.push(tracks[j].uri)
+								console.log("pushed")
+								// console.log(allTracks)
+							}
+						})
+					}
+					
+				})
+			})
+		})
+		// console.log(artistSearch.data)
+		while (allTracks.length == 0) {
+			// ora loading spinner
+			spinner.start();
 		}
+		spinner.stop();
+		return
 
 		for (let i = 0; i < Math.min(artists.length, 2); i++) {
 		  let artist = await spotifyApi.getArtistTopTracks(artists[i], 'CA');
@@ -125,6 +164,8 @@ const singlespotify = async function singlespotify(inputs, flags) {
 		      allTracks.push(tracks[j].uri)
 		  }
 		}
+
+		// do all playlist stuff elsewhere and pass tracks array
 
 		// create an empty public playlist
 		var options = {
@@ -220,14 +261,18 @@ updateNotifier({pkg}).notify();
 
 (async () => {
 
-if (config.get('token') === undefined) {
-	// var token = await auth();
-	authPromise.then(function() {
-		console.log("yes")
-	}, function() {
-		console.log("error")
-	})
-	// singlespotify(cli.input[0], cli.flags, token);
+// if (config.get('token') === undefined) {
+// 	// var token = await auth();
+// 	authPromise.then(function() {
+// 		console.log("yes")
+// 	}, function() {
+// 		console.log("error")
+// 	})
+// 	// singlespotify(cli.input[0], cli.flags, token);
+// }
+if (config.get('username') === undefined || config.get('bearer') === undefined) {
+	let authorization = await auth();
 }
+singlespotify(cli.input[0], cli.flags);
 
 })()
