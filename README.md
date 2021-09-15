@@ -32,9 +32,11 @@ Usage
 
     Options
       --name [-n] "playlist name"
+      --artirst-id [-a] "artist id"
 
     Example
       $ singlespotify "Kanye West" -n "My awesome playlist!"
+      $ singlespotify -a "7dGJo4pcD2V6oG8kP0tJRR" -n "My awesome playlist!"
       ? Enter your Spotify username kabirvirji
       ? Enter your Spotify bearer token ************************************************************
 
@@ -47,7 +49,8 @@ Usage
 - **03/15/17** Added [Inquirer](https://github.com/SBoudrias/Inquirer.js) and [conf](https://github.com/sindresorhus/conf) for authentication
 - **03/16/17** Removed `-a` flag and added option to choose playlist name with `-n` flag
 - **03/19/17** Used [update-notifier](https://github.com/yeoman/update-notifier) to notify users about updates 
-- **11/03/19** Updated to accommodate API changes 
+- **11/03/19** Updated to accommodate API changes
+- **14/09/21** Added Full tracks of artist to Playlist
 
 
 Shoutout to [kshvmdn](https://github.com/kshvmdn) for all the help!
